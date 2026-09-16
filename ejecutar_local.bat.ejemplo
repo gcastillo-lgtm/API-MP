@@ -1,0 +1,16 @@
+@echo off
+REM ------------------------------------------------------------------
+REM Copia este archivo como "ejecutar_local.bat" (sin ".ejemplo") y
+REM completa tus datos reales abajo. "ejecutar_local.bat" ya está en
+REM .gitignore, así que aunque subas la carpeta a GitHub, ese archivo
+REM con tus credenciales reales NUNCA se sube.
+REM ------------------------------------------------------------------
+
+set MP_TICKET=TU_TICKET_AQUI
+set SMTP_USER=tu_correo@gmail.com
+set SMTP_PASS=tu_contraseña_de_aplicacion_de_16_caracteres
+set EMAIL_TO=destinatario@empresa.cl
+set DIAS_A_REVISAR=30
+
+python buscar_licitaciones.py
+pause

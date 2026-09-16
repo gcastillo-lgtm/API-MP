@@ -1,0 +1,40 @@
+name: Buscar licitaciones fotovoltaicas (cada hora)
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # cada hora en punto (hora UTC)
+  workflow_dispatch: {}    # permite correrlo manualmente desde la pestaña "Actions"
+
+permissions:
+  contents: write
+
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Ejecutar buscador y generar página
+        env:
+          MP_TICKET: ${{ secrets.MP_TICKET }}
+          SMTP_HOST: smtp.gmail.com
+          SMTP_PORT: 587
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          DIAS_A_REVISAR: "30"
+        run: python buscar_licitaciones.py
+
+      - name: Guardar cambios (página, caché e historial)
+        run: |
+          git config user.name "bot-licitaciones"
+          git config user.email "bot@localhost"
+          git add docs/index.html vistas.json detalle_cache.json
+          git diff --staged --quiet || git commit -m "Actualiza licitaciones fotovoltaicas"
+          git push
